@@ -67,22 +67,28 @@ All quiz questions are stored in the `quiz.html` file within the `gameData.cases
 
 ```javascript
 {
-    id: 1,                    // Unique question ID
+    id: 1,                    // Unique question ID (must be unique across all questions)
     num: "#1",                // Question number display
-    text: "Question text?",   // The actual question
+    question: "Question text?",   // The actual question
     options: [                // Array of answer options
         "Option A",
         "Option B",
         "Option C",
         "Option D"
     ],
-    correct: [0],             // Index of correct answer(s) (0-based)
-    isMultiSelect: false,     // true if multiple answers are correct
-    explanation: "...",       // Explanation shown after answering
-    keyPoints: [              // Optional: key learning points
-        "Point 1",
-        "Point 2"
-    ]
+    correct: 0,               // For single answer: index (0-based)
+                              // For multiple answers: array like [0, 2]
+    multiSelect: true,        // Optional: true if multiple answers can be selected
+                              // Omit this property for single-select questions
+    explanation: {            // Explanation object shown after answering
+        title: "Concept Title",
+        points: [             // Array of explanation points
+            "Point 1",
+            "Point 2",
+            "Point 3"
+        ],
+        keyPoint: "Key takeaway message for students"
+    }
 }
 ```
 
@@ -118,44 +124,55 @@ const gameData = {
 4. **Add a new question** to the questions array:
 ```javascript
 {
-    id: 100,  // Use a unique ID
+    id: 100,  // Use a unique ID - check existing questions to avoid duplicates
     num: "#1",
-    text: "What is the primary mechanism of cellular injury in ischemia?",
+    question: "What is the primary mechanism of cellular injury in ischemia?",
     options: [
         "Reduced oxygen supply to tissues",
         "Increased calcium influx",
         "Free radical formation",
         "All of the above"
     ],
-    correct: [3],  // Index 3 means "All of the above"
-    isMultiSelect: false,
-    explanation: "Ischemia causes cellular injury through multiple mechanisms including reduced oxygen supply, increased intracellular calcium, and free radical formation during reperfusion.",
-    keyPoints: [
-        "Ischemia = reduced blood flow",
-        "Multiple injury mechanisms work together",
-        "Reperfusion can worsen injury"
-    ]
+    correct: 3,  // Index 3 means "All of the above"
+    explanation: {
+        title: "Ischemic Cellular Injury",
+        points: [
+            "Ischemia = reduced blood flow leading to decreased oxygen",
+            "Multiple injury mechanisms work together",
+            "Reduced ATP production affects cellular functions",
+            "Calcium influx disrupts cellular processes",
+            "Reperfusion can cause additional injury via free radicals"
+        ],
+        keyPoint: "Ischemia causes cellular injury through multiple interconnected mechanisms, not just one pathway."
+    }
 }
 ```
 
-5. **For multiple correct answers**, set `isMultiSelect: true` and list all correct indices:
+5. **For multiple correct answers**, set `multiSelect: true` and use an array for correct indices:
 ```javascript
 {
     id: 101,
     num: "#2",
-    text: "Which of the following are signs of inflammation? (Select all that apply)",
+    question: "Which of the following are signs of inflammation? (Select all that apply)",
     options: [
         "Redness",
         "Fever",
         "Swelling",
         "Hypothermia"
     ],
-    correct: [0, 1, 2],  // Multiple correct answers
-    isMultiSelect: true,
-    explanation: "The cardinal signs of inflammation include redness, heat (fever), swelling, pain, and loss of function. Hypothermia is not a typical sign.",
-    keyPoints: [
-        "Remember: Redness, Heat, Swelling, Pain, Loss of function"
-    ]
+    correct: [0, 1, 2],  // Multiple correct answers as array
+    multiSelect: true,   // Enable checkbox selection
+    explanation: {
+        title: "Cardinal Signs of Inflammation",
+        points: [
+            "The five cardinal signs: Redness, Heat, Swelling, Pain, Loss of function",
+            "Redness from increased blood flow (vasodilation)",
+            "Heat/fever from increased metabolism and blood flow",
+            "Swelling from fluid accumulation (edema)",
+            "Hypothermia is NOT a sign of inflammation"
+        ],
+        keyPoint: "Remember the 5 cardinal signs: Rubor (redness), Calor (heat), Tumor (swelling), Dolor (pain), Functio laesa (loss of function)"
+    }
 }
 ```
 
@@ -164,9 +181,10 @@ const gameData = {
 ### Tips for Creating Good Questions
 
 - **Use clear, unambiguous language**
+- **Ensure unique question IDs** - Each question must have a unique ID across ALL case studies to avoid tracking conflicts. Check existing IDs before adding new questions.
 - **Base questions on clinical scenarios** when possible
 - **Provide detailed explanations** that teach, not just confirm answers
-- **Include key points** to highlight important concepts
+- **Include key points** to highlight important concepts in the explanation object
 - **Test your questions** to ensure they work correctly
 - **Mix difficulty levels** to challenge all students
 
