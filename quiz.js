@@ -1,7 +1,14 @@
 // Quiz Logic
 class Quiz {
     constructor(questions) {
-        this.questions = shuffleArray(questions).slice(0, 10); // Select 10 random questions
+        // Validate questions array
+        if (!questions || questions.length === 0) {
+            throw new Error('No questions available. Please add questions to the questions.js file.');
+        }
+        
+        this.allQuestions = questions; // Store original questions
+        const numQuestions = Math.min(10, questions.length);
+        this.questions = shuffleArray([...questions]).slice(0, numQuestions);
         this.currentQuestionIndex = 0;
         this.score = 0;
         this.selectedAnswer = null;
@@ -28,6 +35,18 @@ class Quiz {
         this.totalQuestionsSpan = document.getElementById('total-questions');
         this.progressBar = document.getElementById('progress');
         this.restartBtn = document.getElementById('restart-btn');
+        
+        // Validate required elements exist
+        const requiredElements = [
+            'questionText', 'optionsContainer', 'feedbackDiv', 'submitBtn',
+            'nextBtn', 'questionContainer', 'resultsContainer', 'scoreDisplay'
+        ];
+        
+        for (const element of requiredElements) {
+            if (!this[element]) {
+                throw new Error(`Required element not found: ${element}. Check HTML structure.`);
+            }
+        }
     }
 
     bindEvents() {
@@ -55,7 +74,16 @@ class Quiz {
             optionDiv.className = 'option';
             optionDiv.textContent = option;
             optionDiv.dataset.index = index;
+            optionDiv.setAttribute('role', 'button');
+            optionDiv.setAttribute('tabindex', '0');
+            optionDiv.setAttribute('aria-label', `Option ${index + 1}: ${option}`);
             optionDiv.addEventListener('click', () => this.selectOption(optionDiv, index));
+            optionDiv.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.selectOption(optionDiv, index);
+                }
+            });
             this.optionsContainer.appendChild(optionDiv);
         });
 
@@ -65,6 +93,11 @@ class Quiz {
     }
 
     selectOption(optionDiv, index) {
+        // Don't allow selection if options are disabled
+        if (optionDiv.classList.contains('disabled')) {
+            return;
+        }
+        
         // Remove previous selection
         const allOptions = this.optionsContainer.querySelectorAll('.option');
         allOptions.forEach(opt => opt.classList.remove('selected'));
@@ -87,6 +120,7 @@ class Quiz {
         allOptions.forEach(opt => {
             opt.classList.add('disabled');
             opt.style.cursor = 'not-allowed';
+            opt.style.pointerEvents = 'none';
         });
 
         // Check if answer is correct
@@ -161,7 +195,7 @@ class Quiz {
             messageClass = 'good';
         } else if (percentScore >= 60) {
             message = '📚 Keep studying! Review the explanations to improve your understanding.';
-            messageClass = 'good';
+            messageClass = 'needs-improvement';
         } else {
             message = '💪 Don\'t give up! Consider reviewing your pathophysiology notes and try again.';
             messageClass = 'needs-improvement';
@@ -172,8 +206,9 @@ class Quiz {
     }
 
     restart() {
-        // Reset quiz state
-        this.questions = shuffleArray(questions).slice(0, 10);
+        // Reset quiz state using stored questions
+        const numQuestions = Math.min(10, this.allQuestions.length);
+        this.questions = shuffleArray([...this.allQuestions]).slice(0, numQuestions);
         this.currentQuestionIndex = 0;
         this.score = 0;
         this.selectedAnswer = null;
