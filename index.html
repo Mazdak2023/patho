@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathophysiology Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏥 Pathophysiology Quiz</h1>
+            <div class="header-info">
+                <a href="landing.html" class="btn-back">← Instructions</a>
+                <div class="score-display">
+                    <span id="score">Score: 0/0</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div id="quiz-container">
+                <div class="progress-bar">
+                    <div id="progress" class="progress-fill"></div>
+                </div>
+                
+                <div id="question-container">
+                    <div class="question-number">
+                        Question <span id="current-question">1</span> of <span id="total-questions">10</span>
+                    </div>
+                    <h2 id="question-text"></h2>
+                    <div id="options-container" class="options"></div>
+                    <div id="feedback" class="feedback hidden"></div>
+                    <div class="button-group">
+                        <button id="submit-btn" class="btn btn-primary">Submit Answer</button>
+                        <button id="next-btn" class="btn btn-secondary hidden">Next Question</button>
+                    </div>
+                </div>
+
+                <div id="results-container" class="hidden">
+                    <h2>Quiz Complete! 🎉</h2>
+                    <div class="results-summary">
+                        <p class="final-score">Your Score: <span id="final-score">0</span>/<span id="final-total">0</span></p>
+                        <p class="percentage">Percentage: <span id="percentage">0</span>%</p>
+                        <p id="performance-message" class="performance-message"></p>
+                    </div>
+                    <div class="button-group">
+                        <button id="restart-btn" class="btn btn-primary">Retake Quiz</button>
+                        <a href="landing.html" class="btn btn-secondary">Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2026 Pathophysiology Quiz | For Educational Purposes</p>
+        </footer>
+    </div>
+
+    <script src="questions.js"></script>
+    <script src="quiz.js"></script>
+</body>
+</html>
